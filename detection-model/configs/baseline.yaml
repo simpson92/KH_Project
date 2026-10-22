@@ -1,0 +1,33 @@
+# ==================================================================
+# Baseline 학습 단계 팀 공통 Baseline 학습 조건 ("Baseline 조건 Freeze")
+# ------------------------------------------------------------------
+# - scripts/10_train_baseline.py 가 이 파일만 읽어서 학습한다. (코드에 숫자를 따로 적지 않음)
+# - 학습 전에 팀 회의로 값을 확정하고, 학습을 시작한 뒤에는 바꾸지 않는다.
+# - 바꿔야 하면 baseline_v2 로 이름을 올리고 이유를 reports/issue_log.md 에 남긴다.
+# - ★ 표시 = 2026-10-14 팀 회의 확정값 (근거: Split 단계 Smoke Test · reports/smoke_test.md)
+# ==================================================================
+
+name: baseline_v1                 # runs/baseline_v1 · 요구사항 Gate 경로와 같아야 함
+dataset_version: kimchi_v1        # manifests/ 의 dataset_version 과 같아야 학습 시작
+label_fingerprint: 5c2b4fc2c3e6   # data/subject7_final/labels 지문 (README 6.1)
+ultralytics_version: 8.4.175      # 팀 5명 고정 버전 (환경 구성 단계 환경 표) · 다르면 학습 시작 안 함
+
+model: yolo11n.pt                 # 사전학습 가중치 (detection-model/yolo11n.pt · 환경 구성 단계 Load 확인)
+pretrained: true
+
+epochs: 50         # ★ Smoke Test 1 epoch ≈ 22초 → 50 epoch ≈ 20분 (예시와 같음)
+patience: 50       # ★ epochs 와 같게 = 조기 종료 없이 끝까지 (Gate "학습 완료" 판단을 단순하게)
+imgsz: 640         # ★ Smoke Test 와 같음 · 4K 원본을 640 으로 줄여 학습 (작은 이물 FN 은 실패 분석 단계 분석)
+batch: 16          # ★ Smoke Test batch 8 에서 GPU_mem 1.25G / 12G → 16 도 여유
+workers: 2         # Smoke Test 와 같음 (WSL 안정성)
+
+# optimizer=auto 는 학습 길이에 따라 몰래 바뀌므로 직접 고정한다 (smoke_test.md 4장 ③)
+# 아래 3개는 Smoke Test 에서 auto 가 실제로 고른 값과 같다 → 동작은 같고 "명시"만 한 것
+# (auto 판단식: ceil(600 ÷ max(batch, nbs 64)) × 50 epoch = 500 < 10,000 → auto 도 AdamW 를 고름)
+optimizer: AdamW   # ★
+lr0: 0.000909      # ★ AdamW 학습률 (auto 공식: 0.002 × 5 ÷ (4 + Class 7개))
+momentum: 0.9      # ★ auto 가 AdamW 에 쓰는 값 (기본값 0.937 과 다름 → 명시)
+
+seed: 42           # ★ 요구사항 §17.1 예시값 · 팀 결정 (Ultralytics 기본값은 0)
+deterministic: true
+amp: true          # Smoke Test 에서 AMP checks passed

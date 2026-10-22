@@ -46,22 +46,35 @@ data/
 handoff_subject08/
 *.zip
 
-# 교과 7 연습용 폴더 (어느 위치에 있든 제외)
+# 라벨 검수 연습용 폴더 (어느 위치에 있든 제외)
 **/pratice/images/
 **/pratice/labels/
 
 # ==========================================
-# prj08 (교과 8) - NDA 데이터·결과물 업로드 금지
+# detection-model (검출 모델) - NDA 데이터·결과물 업로드 금지
 # ※ data/, runs/, *.pt 는 위에서 이미 제외됨
+# ※ 옛 폴더 이름 prj08/ 규칙도 함께 둔다: 로컬에 남은 옛 폴더가 실수로 올라가지 않게
 # ==========================================
+detection-model/models/
+detection-model/demo/failure_analysis/
+detection-model/demo/prediction_images/
+detection-model/demo/auto_label/
+detection-model/demo/*.mp4
+detection-model/**/*.jpg
+detection-model/**/*.jpeg
+detection-model/**/*.JPG
+detection-model/**/*.JPEG
+
 prj08/models/
 prj08/demo/failure_analysis/
 prj08/demo/prediction_images/
 prj08/demo/auto_label/
 prj08/demo/*.mp4
-
-# prj08 안의 이미지는 위치와 상관없이 전부 제외 (이중 안전장치)
 prj08/**/*.jpg
 prj08/**/*.jpeg
 prj08/**/*.JPG
 prj08/**/*.JPEG
+
+# demo/ 는 폴더 전체 제외 (발표용 비교 이미지 등 원본 사진이 들어갈 수 있음)
+detection-model/demo/
+prj08/demo/
